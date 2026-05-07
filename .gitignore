@@ -41,3 +41,5 @@ garage_s3/secrets.txt
 garage_s3/garage.toml
 garage_s3/meta
 garage_s3/data
+
+src/main/resources/application.properties
