@@ -2,11 +2,16 @@ package org.cloud.storage.service;
 
 import org.cloud.storage.dto.S3ResourceDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -18,6 +23,23 @@ public class ResourceService {
 
     public ResourceService(S3Client s3Client) {
         this.s3Client = s3Client;
+    }
+
+    public S3ResourceDto uploadS3Resource(String path, MultipartFile file) {
+        try {
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(path)
+                            .contentType(file.getContentType())
+                            .contentLength(file.getSize())
+                            .build(),
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+            );
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "upload failed");
+        }
+        return findFile(path);
     }
 
     public void deleteS3Resource(String path) {
