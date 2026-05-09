@@ -25,6 +25,7 @@ public class ResourceService {
         this.s3Client = s3Client;
     }
 
+    // TODO : add return status
     public S3ResourceDto uploadS3Resource(String path, MultipartFile file) {
         try {
             s3Client.putObject(
@@ -42,6 +43,7 @@ public class ResourceService {
         return findFile(path);
     }
 
+    // TODO : add return status
     public void deleteS3Resource(String path) {
         if (path.endsWith("/")) {
             deleteFolder(path);
@@ -81,6 +83,7 @@ public class ResourceService {
                         .build());
     }
 
+    // TODO : add return status
     public S3ResourceDto findS3Resource(String path) {
         S3ResourceDto file = findFile(path);
         S3ResourceDto folder = findFolder(path);

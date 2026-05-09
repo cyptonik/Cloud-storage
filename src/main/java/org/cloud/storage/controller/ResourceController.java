@@ -55,7 +55,7 @@ public class ResourceController {
         try {
             S3ResourceDto resourceDto = resourceService.uploadS3Resource(path, file);
             if (resourceDto == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "failed to upload");
             }
             return resourceDto;
         } catch (S3Exception e) {
