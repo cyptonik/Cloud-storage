@@ -18,48 +18,25 @@ public class ResourceController {
 
     @GetMapping("/api/resource")
     public S3ResourceDto getResourceByPath(@RequestParam String path) {
-        if (path == null || path.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid path");
-        }
-
-        try {
-            S3ResourceDto resourceDto = resourceService.findS3Resource(path);
-            if (resourceDto == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not found");
-            }
-            return resourceDto;
-        } catch (S3Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.awsErrorDetails().errorMessage());
-        }
+        return resourceService.findS3Resource(path);
     }
 
     @DeleteMapping("/api/resource")
     public void deleteResourceByPath(@RequestParam String path) {
-        if (path == null || path.isEmpty()) {
+        if (path.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid path");
         }
 
-        try {
-            resourceService.deleteS3Resource(path);
-        } catch (S3Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.awsErrorDetails().errorMessage());
-        }
+        resourceService.deleteS3Resource(path);
     }
 
     @PostMapping("/api/resource")
+    @ResponseStatus(HttpStatus.CREATED)
     public S3ResourceDto uploadResourceByPath(@RequestParam String path, @RequestParam MultipartFile file) {
-        if (path == null || path.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid path");
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "file is empty");
         }
 
-        try {
-            S3ResourceDto resourceDto = resourceService.uploadS3Resource(path, file);
-            if (resourceDto == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "failed to upload");
-            }
-            return resourceDto;
-        } catch (S3Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.awsErrorDetails().errorMessage());
-        }
+        return resourceService.uploadS3Resource(path, file);
     }
 }
