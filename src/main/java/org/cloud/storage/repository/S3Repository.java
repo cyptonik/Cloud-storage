@@ -26,7 +26,7 @@ public class S3Repository {
         return headObject(path).contentLength();
     }
 
-    public void putObject(String path, MultipartFile file) throws IOException{
+    public void putObject(String path, MultipartFile file) throws IOException {
         s3Client.putObject(
                 PutObjectRequest.builder()
                         .bucket(bucket)
@@ -34,7 +34,7 @@ public class S3Repository {
                         .contentType(file.getContentType())
                         .contentLength(file.getSize())
                         .build(),
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+                RequestBody.fromBytes(file.getBytes())
         );
     }
 
